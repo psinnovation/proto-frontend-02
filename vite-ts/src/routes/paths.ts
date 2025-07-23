@@ -137,6 +137,9 @@ export const paths = {
         edit: `${ROOTS.DASHBOARD}/invoice/${MOCK_ID}/edit`,
       },
     },
+    importDdt: {
+      root: `${ROOTS.DASHBOARD}/import-ddt`,
+    },
     post: {
       root: `${ROOTS.DASHBOARD}/post`,
       new: `${ROOTS.DASHBOARD}/post/new`,
