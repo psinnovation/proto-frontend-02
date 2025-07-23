@@ -33,6 +33,7 @@ const ProductEditPage = lazy(() => import('src/pages/dashboard/product/edit'));
 const OrderListPage = lazy(() => import('src/pages/dashboard/order/list'));
 const OrderDetailsPage = lazy(() => import('src/pages/dashboard/order/details'));
 // Invoice
+const ImportDdtPage = lazy(() => import('src/pages/dashboard/import-ddt/import-ddt'));
 const InvoiceListPage = lazy(() => import('src/pages/dashboard/invoice/list'));
 const InvoiceDetailsPage = lazy(() => import('src/pages/dashboard/invoice/details'));
 const InvoiceCreatePage = lazy(() => import('src/pages/dashboard/invoice/new'));
@@ -165,6 +166,13 @@ export const dashboardRoutes: RouteObject[] = [
           { path: ':id', element: <InvoiceDetailsPage /> },
           { path: ':id/edit', element: <InvoiceEditPage /> },
           { path: 'new', element: <InvoiceCreatePage /> },
+        ],
+      },
+      {
+        path: 'import-ddt',
+        children: [
+          { index: true, element: <ImportDdtPage /> },
+          { path: 'esegui-importazione', element: <ImportDdtPage /> },
         ],
       },
       {

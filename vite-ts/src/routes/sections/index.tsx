@@ -11,11 +11,13 @@ import { mainRoutes } from './main';
 import { authDemoRoutes } from './auth-demo';
 import { dashboardRoutes } from './dashboard';
 import { componentsRoutes } from './components';
+//import { DashboardLayout } from '../../layouts/dashboard';
 
 // ----------------------------------------------------------------------
 
 const HomePage = lazy(() => import('src/pages/home'));
 const Page404 = lazy(() => import('src/pages/error/404'));
+//const DashboardPage = lazy(() => import('src/pages/dashboard'));
 
 export const routesSection: RouteObject[] = [
   {
@@ -33,6 +35,9 @@ export const routesSection: RouteObject[] = [
         <MainLayout>
           <HomePage />
         </MainLayout>
+        {/*<DashboardLayout>
+          <DashboardPage />
+        </DashboardLayout>*/}
       </Suspense>
     ),
   },

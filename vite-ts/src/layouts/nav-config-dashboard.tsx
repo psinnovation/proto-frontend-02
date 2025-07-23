@@ -81,7 +81,7 @@ export const navData: NavSectionProps['data'] = [
    * Management
    */
   {
-    subheader: 'Management',
+    subheader: 'Procedure',
     items: [
       {
         title: 'User',
@@ -125,6 +125,14 @@ export const navData: NavSectionProps['data'] = [
           { title: 'Details', path: paths.dashboard.invoice.demo.details },
           { title: 'Create', path: paths.dashboard.invoice.new },
           { title: 'Edit', path: paths.dashboard.invoice.demo.edit },
+        ],
+      },
+      {
+        title: 'Import DDT',
+        path: paths.dashboard.importDdt.root,
+        icon: ICONS.user,
+        children: [
+          { title: 'Esegui Importazione', path: paths.dashboard.importDdt.root },
         ],
       },
       {

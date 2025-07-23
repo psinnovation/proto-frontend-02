@@ -34,7 +34,7 @@ export type ConfigValue = {
 export const CONFIG: ConfigValue = {
   appName: 'Minimal UI',
   appVersion: packageJson.version,
-  serverUrl: import.meta.env.VITE_SERVER_URL ?? '',
+  serverUrl: import.meta.env.VITE_SERVER_URL ?? 'http://localhost:7272',
   assetsDir: import.meta.env.VITE_ASSETS_DIR ?? '',
   /**
    * Auth
@@ -73,9 +73,9 @@ export const CONFIG: ConfigValue = {
    * Auth0
    */
   auth0: {
-    clientId: import.meta.env.VITE_AUTH0_CLIENT_ID ?? '',
-    domain: import.meta.env.VITE_AUTH0_DOMAIN ?? '',
-    callbackUrl: import.meta.env.VITE_AUTH0_CALLBACK_URL ?? '',
+    clientId: import.meta.env.VITE_AUTH0_CLIENT_ID ?? '1234567890',
+    domain: import.meta.env.VITE_AUTH0_DOMAIN ?? 'example.auth0.com',
+    callbackUrl: import.meta.env.VITE_AUTH0_CALLBACK_URL ?? 'http://localhost:8080',
   },
   /**
    * Supabase
