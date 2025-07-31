@@ -73,35 +73,45 @@ const TABLE_HEAD: TableHeadCellProps[] = [
 export function ImportazioneView() {
   const theme = useTheme();
 
-  const table = useTable({ defaultOrderBy: 'createDate' });
+  const previewTable = useTable({ defaultOrderBy: 'createDate' });
+  const resultTable = useTable({ defaultOrderBy: 'createDate' });
 
   const confirmDialog = useBoolean();
 
-  const [tableData, setTableData] = useState<IDdt[]>(_ddt);
-  const [tableResults, setTableResults] = useState<IDdt[]>([]);
+  const [previewTableData, setPreviewTableData] = useState<IDdt[]>(_ddt);
+  const [resultTableData, setResultTableData] = useState<IDdt[]>([]);
 
   const [isDdtDownloaded, setIsDdtDownloaded] = useState(false);
   const [isDdtImported, setIsDdtImported] = useState(false);
 
-  const filters = useSetState<IDdtTableFilters>({
+  const previewFilters = useSetState<IDdtTableFilters>({
     name: '',
     status: 'all',
     shipments: [],
     orders: [],
   });
-  const { state: currentFilters, setState: updateFilters } = filters;
-
-
-  const dataFiltered = applyFilterFirst({
-    inputData: tableData,
-    comparator: getComparator(table.order, table.orderBy),
-    filters: currentFilters,
+  const resultFilters = useSetState<IDdtTableFilters>({
+    name: '',
+    status: 'all',
+    shipments: [],
+    orders: [],
   });
 
-  const receivedDataFiltered = applyFilterSecond({
-    inputData: tableResults,
-    comparator: getComparator(table.order, table.orderBy),
-    filters: currentFilters,
+  // Estraggo i due stati e relativi setter:
+  const { state: currentPreviewFilters, setState: updatePreviewFilters } = previewFilters;
+  const { state: currentResultFilters, setState: updateResultFilters } = resultFilters;
+
+
+  const previewDataFiltered = applyFilterFirst({
+    inputData: previewTableData,
+    comparator: getComparator(previewTable.order, previewTable.orderBy),
+    filters: currentPreviewFilters,
+  });
+
+  const resultDataFiltered = applyFilterSecond({
+    inputData: resultTableData,
+    comparator: getComparator(resultTable.order, resultTable.orderBy),
+    filters: currentResultFilters,
   });
 
   const handleDdtDownload = useCallback(() => {
@@ -110,37 +120,44 @@ export function ImportazioneView() {
 
   const handleDdtImport = useCallback(() => {
     setIsDdtImported(state => !state);
-    setTableResults(dataFiltered);
-  }, [dataFiltered]);
+    setResultTableData(previewDataFiltered);
+  }, [previewDataFiltered]);
 
-  const dataInPage = rowInPage(dataFiltered, table.page, table.rowsPerPage);
+  const dataInPage = rowInPage(previewDataFiltered, previewTable.page, previewTable.rowsPerPage);
 
-  const canReset =
-    !!currentFilters.name ||
-    currentFilters.shipments.length > 0 ||
-    currentFilters.orders.length > 0 ||
-    currentFilters.status !== 'all';
+  const canResetPreview =
+    !!currentPreviewFilters.name ||
+    currentPreviewFilters.shipments.length > 0 ||
+    currentPreviewFilters.orders.length > 0 ||
+    currentPreviewFilters.status !== 'all';
 
-  const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
+  const canResetResult =
+    !!currentResultFilters.name ||
+    currentResultFilters.shipments.length > 0 ||
+    currentResultFilters.orders.length > 0 ||
+    currentResultFilters.status !== 'all';
+
+  const notFoundPreview = (!previewDataFiltered.length && canResetPreview) || !previewDataFiltered.length;
+  const notFoundResult = (!resultDataFiltered.length && canResetResult) || !resultDataFiltered.length;
 
   const getInvoiceLength = (status: string) =>
-    tableData.filter((item) => item.status === status).length;
+    previewTableData.filter((item) => item.status === status).length;
 
   const getTotalAmount = (status: string) =>
     sumBy(
-      tableData.filter((item) => item.status === status),
+      previewTableData.filter((item) => item.status === status),
       (invoice) => invoice.totalAmount
     );
 
   const getPercentByStatus = (status: string) =>
-    (getInvoiceLength(status) / tableData.length) * 100;
+    (getInvoiceLength(status) / previewTableData.length) * 100;
 
   const TABS = [
     {
       value: 'all',
       label: 'All',
       color: 'default',
-      count: tableData.length,
+      count: previewTableData.length,
     },
     {
       value: 'success',
@@ -158,56 +175,56 @@ export function ImportazioneView() {
 
   const handleDeleteRow = useCallback(
     (id: string) => {
-      const deleteRow = tableData.filter((row) => row.id !== id);
+      const deleteRow = previewTableData.filter((row) => row.id !== id);
 
       toast.success('Delete success!');
 
-      setTableData(deleteRow);
+      setPreviewTableData(deleteRow);
 
-      table.onUpdatePageDeleteRow(dataInPage.length);
+      previewTable.onUpdatePageDeleteRow(dataInPage.length);
     },
-    [dataInPage.length, table, tableData]
+    [dataInPage.length, previewTable, previewTableData]
   );
 
   const handleDeleteRows = useCallback(() => {
-    const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
+    const deleteRows = previewTableData.filter((row) => !previewTable.selected.includes(row.id));
 
     toast.success('Delete success!');
 
-    setTableData(deleteRows);
+    setPreviewTableData(deleteRows);
 
-    table.onUpdatePageDeleteRows(dataInPage.length, dataFiltered.length);
-  }, [dataFiltered.length, dataInPage.length, table, tableData]);
+    previewTable.onUpdatePageDeleteRows(dataInPage.length, previewDataFiltered.length);
+  }, [previewDataFiltered.length, dataInPage.length, previewTable, previewTableData]);
 
   const handleDeleteResultsRow = useCallback(
     (id: string) => {
-      const deleteRow = tableResults.filter((row) => row.id !== id);
+      const deleteRow = resultTableData.filter((row) => row.id !== id);
 
       toast.success('Delete success!');
 
-      setTableResults(deleteRow);
+      setResultTableData(deleteRow);
 
-      table.onUpdatePageDeleteRow(dataInPage.length);
+      resultTable.onUpdatePageDeleteRow(dataInPage.length);
     },
-    [dataInPage.length, table, tableResults]
+    [dataInPage.length, resultTable, resultTableData]
   );
 
   const handleDeleteResultsRows = useCallback(() => {
-    const deleteRows = tableResults.filter((row) => !table.selected.includes(row.id));
+    const deleteRows = resultTableData.filter((row) => !resultTable.selected.includes(row.id));
 
     toast.success('Delete success!');
 
-    setTableResults(deleteRows);
+    setResultTableData(deleteRows);
 
-    table.onUpdatePageDeleteRows(dataInPage.length, receivedDataFiltered.length);
-  }, [receivedDataFiltered.length, dataInPage.length, table, tableResults]);
+    resultTable.onUpdatePageDeleteRows(dataInPage.length, resultDataFiltered.length);
+  }, [resultDataFiltered.length, dataInPage.length, resultTable, resultTableData]);
 
   const handleFilterStatus = useCallback(
     (event: React.SyntheticEvent, newValue: string) => {
-      table.onResetPage();
-      updateFilters({ status: newValue });
+      resultTable.onResetPage();
+      updateResultFilters({ status: newValue });
     },
-    [updateFilters, table]
+    [updateResultFilters, resultTable]
   );
 
   const renderConfirmDialog = () => (
@@ -217,7 +234,7 @@ export function ImportazioneView() {
       title="Delete"
       content={
         <>
-          Are you sure want to delete <strong> {table.selected.length} </strong> items?
+          Are you sure want to delete <strong> {previewTable.selected.length} </strong> items?
         </>
       }
       action={
@@ -242,7 +259,7 @@ export function ImportazioneView() {
       title="Delete"
       content={
         <>
-          Are you sure want to delete <strong> {table.selected.length} </strong> items?
+          Are you sure want to delete <strong> {resultTable.selected.length} </strong> items?
         </>
       }
       action={
@@ -276,21 +293,29 @@ export function ImportazioneView() {
         <Card sx={{ mb: { xs: 3, md: 5 } }}>
 
           <ImportDdtTableToolbar
-            filters={filters}
-            onResetPage={table.onResetPage}
+            filters={previewFilters}
+            onResetPage={previewTable.onResetPage}
             options={{ services: DDT_SERVICE_OPTIONS.map((option) => option.name) }}
           />
 
+          {canResetPreview && (
+            <ImportDdtTableFiltersResult
+              filters={previewFilters}
+              onResetPage={previewTable.onResetPage}
+              totalResults={resultDataFiltered.length}
+              sx={{ p: 2.5, pt: 0 }}
+            />
+          )}
 
           <Box sx={{ position: 'relative' }}>
             <TableSelectedAction
-              dense={table.dense}
-              numSelected={table.selected.length}
-              rowCount={dataFiltered.length}
+              dense={previewTable.dense}
+              numSelected={previewTable.selected.length}
+              rowCount={previewDataFiltered.length}
               onSelectAllRows={(checked) => {
-                table.onSelectAllRows(
+                previewTable.onSelectAllRows(
                   checked,
-                  dataFiltered.map((row) => row.id)
+                  previewDataFiltered.map((row) => row.id)
                 );
               }}
               action={
@@ -351,34 +376,34 @@ export function ImportazioneView() {
 
             <Scrollbar sx={{ minHeight: 444 }}>
 
-              <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 800 }}>
+              <Table size={previewTable.dense ? 'small' : 'medium'} sx={{ minWidth: 800 }}>
                 <TableHeadCustom
-                  order={table.order}
-                  orderBy={table.orderBy}
+                  order={previewTable.order}
+                  orderBy={previewTable.orderBy}
                   headCells={TABLE_HEAD.filter((headCell) => headCell.label !== 'Status')}
-                  rowCount={dataFiltered.length}
-                  numSelected={table.selected.length}
-                  onSort={table.onSort}
+                  rowCount={previewDataFiltered.length}
+                  numSelected={previewTable.selected.length}
+                  onSort={previewTable.onSort}
                   onSelectAllRows={(checked) =>
-                    table.onSelectAllRows(
+                    previewTable.onSelectAllRows(
                       checked,
-                      dataFiltered.map((row) => row.id)
+                      previewDataFiltered.map((row) => row.id)
                     )
                   }
                 />
                 {isDdtDownloaded ? (
                   <TableBody>
-                    {dataFiltered
+                    {previewDataFiltered
                       .slice(
-                        table.page * table.rowsPerPage,
-                        table.page * table.rowsPerPage + table.rowsPerPage
+                        previewTable.page * previewTable.rowsPerPage,
+                        previewTable.page * previewTable.rowsPerPage + previewTable.rowsPerPage
                       )
                       .map((row) => (
                         <ImportDdtPreviewTableRow
                           key={row.id}
                           row={row}
-                          selected={table.selected.includes(row.id)}
-                          onSelectRow={() => table.onSelectRow(row.id)}
+                          selected={previewTable.selected.includes(row.id)}
+                          onSelectRow={() => previewTable.onSelectRow(row.id)}
                           onDeleteRow={() => handleDeleteRow(row.id)}
                           editHref={paths.dashboard.invoice.edit(row.id)}
                           detailsHref={paths.dashboard.invoice.details(row.id)}
@@ -386,11 +411,11 @@ export function ImportazioneView() {
                       ))}
 
                     <TableEmptyRows
-                      height={table.dense ? 56 : 56 + 20}
-                      emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
+                      height={previewTable.dense ? 56 : 56 + 20}
+                      emptyRows={emptyRows(previewTable.page, previewTable.rowsPerPage, previewDataFiltered.length)}
                     />
 
-                    <TableNoData notFound={notFound} />
+                    <TableNoData notFound={notFoundPreview} />
                   </TableBody>
                 ) : (
                   <TableBody>
@@ -406,11 +431,11 @@ export function ImportazioneView() {
           </Box>
 
           <TablePaginationCustom
-            page={table.page}
-            count={dataFiltered.length}
-            rowsPerPage={table.rowsPerPage}
-            onPageChange={table.onChangePage}
-            onRowsPerPageChange={table.onChangeRowsPerPage}
+            page={previewTable.page}
+            count={previewDataFiltered.length}
+            rowsPerPage={previewTable.rowsPerPage}
+            onPageChange={previewTable.onChangePage}
+            onRowsPerPageChange={previewTable.onChangeRowsPerPage}
           />
         </Card>
 
@@ -477,9 +502,9 @@ export function ImportazioneView() {
                 >
                   <ImportDdtAnalytic
                     title="Total"
-                    total={tableData.length}
+                    total={resultTableData.length}
                     percent={100}
-                    price={sumBy(tableData, (invoice) => invoice.totalAmount)}
+                    price={sumBy(resultTableData, (invoice) => invoice.totalAmount)}
                     icon="solar:bill-list-bold-duotone"
                     color={theme.vars.palette.info.main}
                   />
@@ -507,7 +532,7 @@ export function ImportazioneView() {
 
             <Card sx={{ mb: { xs: 3, md: 5 } }}>
               <Tabs
-                value={currentFilters.status}
+                value={currentResultFilters.status}
                 onChange={handleFilterStatus}
                 sx={{
                   px: 2.5,
@@ -523,7 +548,7 @@ export function ImportazioneView() {
                     icon={
                       <Label
                         variant={
-                          ((tab.value === 'all' || tab.value === currentFilters.status) && 'filled') ||
+                          ((tab.value === 'all' || tab.value === currentResultFilters.status) && 'filled') ||
                           'soft'
                         }
                         color={tab.color}
@@ -536,29 +561,29 @@ export function ImportazioneView() {
               </Tabs>
 
               <ImportDdtTableToolbar
-                filters={filters}
-                onResetPage={table.onResetPage}
+                filters={resultFilters}
+                onResetPage={resultTable.onResetPage}
                 options={{ services: DDT_SERVICE_OPTIONS.map((option) => option.name) }}
               />
 
-              {canReset && (
+              {canResetResult && (
                 <ImportDdtTableFiltersResult
-                  filters={filters}
-                  onResetPage={table.onResetPage}
-                  totalResults={receivedDataFiltered.length}
+                  filters={resultFilters}
+                  onResetPage={resultTable.onResetPage}
+                  totalResults={resultDataFiltered.length}
                   sx={{ p: 2.5, pt: 0 }}
                 />
               )}
 
               <Box sx={{ position: 'relative' }}>
                 <TableSelectedAction
-                  dense={table.dense}
-                  numSelected={table.selected.length}
-                  rowCount={receivedDataFiltered.length}
+                  dense={resultTable.dense}
+                  numSelected={resultTable.selected.length}
+                  rowCount={resultDataFiltered.length}
                   onSelectAllRows={(checked) => {
-                    table.onSelectAllRows(
+                    resultTable.onSelectAllRows(
                       checked,
-                      receivedDataFiltered.map((row) => row.id)
+                      resultDataFiltered.map((row) => row.id)
                     );
                   }}
                   action={
@@ -591,34 +616,34 @@ export function ImportazioneView() {
                 />
 
                 <Scrollbar sx={{ minHeight: 444 }}>
-                  <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 800 }}>
+                  <Table size={resultTable.dense ? 'small' : 'medium'} sx={{ minWidth: 800 }}>
                     <TableHeadCustom
-                      order={table.order}
-                      orderBy={table.orderBy}
+                      order={resultTable.order}
+                      orderBy={resultTable.orderBy}
                       headCells={TABLE_HEAD}
-                      rowCount={receivedDataFiltered.length}
-                      numSelected={table.selected.length}
-                      onSort={table.onSort}
+                      rowCount={resultDataFiltered.length}
+                      numSelected={resultTable.selected.length}
+                      onSort={resultTable.onSort}
                       onSelectAllRows={(checked) =>
-                        table.onSelectAllRows(
+                        resultTable.onSelectAllRows(
                           checked,
-                          receivedDataFiltered.map((row) => row.id)
+                          resultDataFiltered.map((row) => row.id)
                         )
                       }
                     />
 
                     <TableBody>
-                      {receivedDataFiltered
+                      {resultDataFiltered
                         .slice(
-                          table.page * table.rowsPerPage,
-                          table.page * table.rowsPerPage + table.rowsPerPage
+                          resultTable.page * resultTable.rowsPerPage,
+                          resultTable.page * resultTable.rowsPerPage + resultTable.rowsPerPage
                         )
                         .map((row) => (
                           <ImportDdtTableRow
                             key={row.id}
                             row={row}
-                            selected={table.selected.includes(row.id)}
-                            onSelectRow={() => table.onSelectRow(row.id)}
+                            selected={resultTable.selected.includes(row.id)}
+                            onSelectRow={() => resultTable.onSelectRow(row.id)}
                             onDeleteRow={() => handleDeleteResultsRow(row.id)}
                             editHref={paths.dashboard.invoice.edit(row.id)}
                             detailsHref={paths.dashboard.invoice.details(row.id)}
@@ -626,22 +651,22 @@ export function ImportazioneView() {
                         ))}
 
                       <TableEmptyRows
-                        height={table.dense ? 56 : 56 + 20}
-                        emptyRows={emptyRows(table.page, table.rowsPerPage, receivedDataFiltered.length)}
+                        height={resultTable.dense ? 56 : 56 + 20}
+                        emptyRows={emptyRows(resultTable.page, resultTable.rowsPerPage, resultDataFiltered.length)}
                       />
 
-                      <TableNoData notFound={notFound} />
+                      <TableNoData notFound={notFoundResult} />
                     </TableBody>
                   </Table>
                 </Scrollbar>
               </Box>
 
               <TablePaginationCustom
-                page={table.page}
-                count={receivedDataFiltered.length}
-                rowsPerPage={table.rowsPerPage}
-                onPageChange={table.onChangePage}
-                onRowsPerPageChange={table.onChangeRowsPerPage}
+                page={resultTable.page}
+                count={resultDataFiltered.length}
+                rowsPerPage={resultTable.rowsPerPage}
+                onPageChange={resultTable.onChangePage}
+                onRowsPerPageChange={resultTable.onChangeRowsPerPage}
               />
             </Card>
           </>
