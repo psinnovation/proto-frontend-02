@@ -75,7 +75,7 @@ export function ImportDdtAnalytic({ title, total, icon, color, percent, price }:
           component="span"
           sx={{ my: 0.5, display: 'block', typography: 'body2', color: 'text.disabled' }}
         >
-          {fShortenNumber(total)} invoices
+          {fShortenNumber(total)} DDT
         </Box>
 
         <Box component="span" sx={{ typography: 'subtitle2' }}>

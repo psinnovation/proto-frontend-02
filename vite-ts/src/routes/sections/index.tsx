@@ -11,13 +11,14 @@ import { mainRoutes } from './main';
 import { authDemoRoutes } from './auth-demo';
 import { dashboardRoutes } from './dashboard';
 import { componentsRoutes } from './components';
-//import { DashboardLayout } from '../../layouts/dashboard';
+import { DashboardLayout } from '../../layouts/dashboard';
 
 // ----------------------------------------------------------------------
 
 const HomePage = lazy(() => import('src/pages/home'));
 const Page404 = lazy(() => import('src/pages/error/404'));
 //const DashboardPage = lazy(() => import('src/pages/dashboard'));
+const ImportDdtPage = lazy(() => import('src/pages/dashboard/import-ddt/import-ddt'));
 
 export const routesSection: RouteObject[] = [
   {
@@ -36,7 +37,7 @@ export const routesSection: RouteObject[] = [
           <HomePage />
         </MainLayout>
         {/*<DashboardLayout>
-          <DashboardPage />
+          <ImportDdtPage />
         </DashboardLayout>*/}
       </Suspense>
     ),

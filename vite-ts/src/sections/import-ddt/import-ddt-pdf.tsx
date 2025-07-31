@@ -1,4 +1,4 @@
-import type { IInvoice } from 'src/types/invoice';
+import type { IDdt } from 'src/types/ddt';
 
 import { useMemo } from 'react';
 import {
@@ -25,7 +25,7 @@ import { Iconify } from 'src/components/iconify';
 // ----------------------------------------------------------------------
 
 type InvoicePDFProps = {
-  invoice?: IInvoice;
+  invoice?: IDdt;
   currentStatus: string;
 };
 
@@ -45,7 +45,7 @@ export function InvoicePDFDownload({ invoice, currentStatus }: InvoicePDFProps) 
   return (
     <PDFDownloadLink
       document={<InvoicePdfDocument invoice={invoice} currentStatus={currentStatus} />}
-      fileName={invoice?.invoiceNumber}
+      fileName={invoice?.id ? `DDT-${invoice.id}.pdf` : 'DDT.pdf'}
       style={{ textDecoration: 'none' }}
     >
       {({ loading }) => renderButton(loading)}
@@ -126,7 +126,7 @@ const useStyles = () =>
   );
 
 type InvoicePdfDocumentProps = {
-  invoice?: IInvoice;
+  invoice?: IDdt;
   currentStatus: string;
 };
 
@@ -142,7 +142,7 @@ function InvoicePdfDocument({ invoice, currentStatus }: InvoicePdfDocumentProps)
     createDate,
     totalAmount,
     invoiceFrom,
-    invoiceNumber,
+    id,
   } = invoice ?? {};
 
   const styles = useStyles();
@@ -155,7 +155,7 @@ function InvoicePdfDocument({ invoice, currentStatus }: InvoicePdfDocumentProps)
         <Text style={[styles.h3, styles.mb8, { textTransform: 'capitalize' }]}>
           {currentStatus}
         </Text>
-        <Text style={[styles.text2]}>{invoiceNumber}</Text>
+        <Text style={[styles.text2]}>{`DDT-${id}`}</Text>
       </View>
     </View>
   );

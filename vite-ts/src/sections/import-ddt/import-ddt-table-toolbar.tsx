@@ -1,7 +1,7 @@
 import type { SelectChangeEvent } from '@mui/material/Select';
 import type { UseSetStateReturn } from 'minimal-shared/hooks';
+import type { IDdtTableFilters } from 'src/types/ddt';
 import type { IDatePickerControl } from 'src/types/common';
-import type { IInvoiceTableFilters } from 'src/types/invoice';
 
 import { useCallback } from 'react';
 import { usePopover } from 'minimal-shared/hooks';
@@ -26,15 +26,14 @@ import { CustomPopover } from 'src/components/custom-popover';
 // ----------------------------------------------------------------------
 
 type Props = {
-  dateError: boolean;
   onResetPage: () => void;
-  filters: UseSetStateReturn<IInvoiceTableFilters>;
+  filters: UseSetStateReturn<IDdtTableFilters>;
   options: {
     services: string[];
   };
 };
 
-export function ImportDdtTableToolbar({ filters, options, dateError, onResetPage }: Props) {
+export function ImportDdtTableToolbar({ filters, options, onResetPage }: Props) {
   const menuActions = usePopover();
 
   const { state: currentFilters, setState: updateFilters } = filters;
@@ -47,29 +46,24 @@ export function ImportDdtTableToolbar({ filters, options, dateError, onResetPage
     [onResetPage, updateFilters]
   );
 
-  const handleFilterService = useCallback(
+  const handleFilterShipments = useCallback(
     (event: SelectChangeEvent<string[]>) => {
       const newValue =
         typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value;
 
       onResetPage();
-      updateFilters({ service: newValue });
+      updateFilters({ shipments: newValue });
     },
     [onResetPage, updateFilters]
   );
 
-  const handleFilterStartDate = useCallback(
-    (newValue: IDatePickerControl) => {
-      onResetPage();
-      updateFilters({ startDate: newValue });
-    },
-    [onResetPage, updateFilters]
-  );
+  const handleFilterOrders = useCallback(
+    (event: SelectChangeEvent<string[]>) => {
+      const newValue =
+        typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value;
 
-  const handleFilterEndDate = useCallback(
-    (newValue: IDatePickerControl) => {
       onResetPage();
-      updateFilters({ endDate: newValue });
+      updateFilters({ orders: newValue });
     },
     [onResetPage, updateFilters]
   );
@@ -113,11 +107,11 @@ export function ImportDdtTableToolbar({ filters, options, dateError, onResetPage
         }}
       >
         <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 180 } }}>
-          <InputLabel htmlFor="filter-service-select">Service</InputLabel>
+          <InputLabel htmlFor="filter-service-select">Spedizione</InputLabel>
           <Select
             multiple
-            value={currentFilters.service}
-            onChange={handleFilterService}
+            value={currentFilters.shipments}
+            onChange={handleFilterShipments}
             input={<OutlinedInput label="Service" />}
             renderValue={(selected) => selected.map((value) => value).join(', ')}
             inputProps={{ id: 'filter-service-select' }}
@@ -128,7 +122,7 @@ export function ImportDdtTableToolbar({ filters, options, dateError, onResetPage
                 <Checkbox
                   disableRipple
                   size="small"
-                  checked={currentFilters.service.includes(option)}
+                  checked={currentFilters.shipments.includes(option)}
                   slotProps={{
                     input: {
                       id: `${option}-checkbox`,
@@ -142,31 +136,35 @@ export function ImportDdtTableToolbar({ filters, options, dateError, onResetPage
           </Select>
         </FormControl>
 
-        <DatePicker
-          label="Start date"
-          value={currentFilters.endDate}
-          onChange={handleFilterStartDate}
-          sx={{ maxWidth: { md: 180 } }}
-        />
-
-        <DatePicker
-          label="End date"
-          value={currentFilters.endDate}
-          onChange={handleFilterEndDate}
-          slotProps={{
-            textField: {
-              error: dateError,
-              helperText: dateError ? 'End date must be later than start date' : null,
-            },
-          }}
-          sx={{
-            maxWidth: { md: 180 },
-            [`& .${formHelperTextClasses.root}`]: {
-              bottom: { md: -40 },
-              position: { md: 'absolute' },
-            },
-          }}
-        />
+        <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 180 } }}>
+          <InputLabel htmlFor="filter-service-select">Ordine</InputLabel>
+          <Select
+            multiple
+            value={currentFilters.orders}
+            onChange={handleFilterOrders}
+            input={<OutlinedInput label="Service" />}
+            renderValue={(selected) => selected.map((value) => value).join(', ')}
+            inputProps={{ id: 'filter-service-select' }}
+            sx={{ textTransform: 'capitalize' }}
+          >
+            {options.services.map((option) => (
+              <MenuItem key={option} value={option}>
+                <Checkbox
+                  disableRipple
+                  size="small"
+                  checked={currentFilters.orders.includes(option)}
+                  slotProps={{
+                    input: {
+                      id: `${option}-checkbox`,
+                      'aria-label': `${option} checkbox`,
+                    },
+                  }}
+                />
+                {option}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
         <Box
           sx={{
@@ -181,7 +179,7 @@ export function ImportDdtTableToolbar({ filters, options, dateError, onResetPage
             fullWidth
             value={currentFilters.name}
             onChange={handleFilterName}
-            placeholder="Search customer or invoice number..."
+            placeholder="Search..."
             slotProps={{
               input: {
                 startAdornment: (
