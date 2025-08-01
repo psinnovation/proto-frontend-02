@@ -1,4 +1,4 @@
-import type { IInvoice } from 'src/types/invoice';
+import type { IDdt } from 'src/types/ddt';
 
 import { useBoolean } from 'minimal-shared/hooks';
 
@@ -21,7 +21,7 @@ import { InvoicePDFViewer, InvoicePDFDownload } from './import-ddt-pdf';
 // ----------------------------------------------------------------------
 
 type Props = {
-  invoice?: IInvoice;
+  invoice?: IDdt;
   currentStatus: string;
   statusOptions: { value: string; label: string }[];
   onChangeStatus: (event: React.ChangeEvent<HTMLInputElement>) => void;

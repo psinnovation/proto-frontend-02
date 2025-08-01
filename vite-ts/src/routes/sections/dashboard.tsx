@@ -111,53 +111,54 @@ export const dashboardRoutes: RouteObject[] = [
     path: 'dashboard',
     element: CONFIG.auth.skip ? dashboardLayout() : <AuthGuard>{dashboardLayout()}</AuthGuard>,
     children: [
-      { index: true, element: <IndexPage /> },
-      { path: 'ecommerce', element: <OverviewEcommercePage /> },
-      { path: 'analytics', element: <OverviewAnalyticsPage /> },
-      { path: 'banking', element: <OverviewBankingPage /> },
-      { path: 'booking', element: <OverviewBookingPage /> },
-      { path: 'file', element: <OverviewFilePage /> },
-      { path: 'course', element: <OverviewCoursePage /> },
-      {
-        path: 'user',
-        children: [
-          { index: true, element: <UserProfilePage /> },
-          { path: 'profile', element: <UserProfilePage /> },
-          { path: 'cards', element: <UserCardsPage /> },
-          { path: 'list', element: <UserListPage /> },
-          { path: 'new', element: <UserCreatePage /> },
-          { path: ':id/edit', element: <UserEditPage /> },
-          {
-            path: 'account',
-            element: accountLayout(),
-            children: [
-              { index: true, element: <AccountGeneralPage /> },
-              { path: 'billing', element: <AccountBillingPage /> },
-              { path: 'notifications', element: <AccountNotificationsPage /> },
-              { path: 'socials', element: <AccountSocialsPage /> },
-              { path: 'change-password', element: <AccountChangePasswordPage /> },
-            ],
-          },
-        ],
-      },
-      {
-        path: 'product',
-        children: [
-          { index: true, element: <ProductListPage /> },
-          { path: 'list', element: <ProductListPage /> },
-          { path: ':id', element: <ProductDetailsPage /> },
-          { path: 'new', element: <ProductCreatePage /> },
-          { path: ':id/edit', element: <ProductEditPage /> },
-        ],
-      },
-      {
-        path: 'order',
-        children: [
-          { index: true, element: <OrderListPage /> },
-          { path: 'list', element: <OrderListPage /> },
-          { path: ':id', element: <OrderDetailsPage /> },
-        ],
-      },
+      { index: true, element: <ImportDdtPage /> },
+      /* { index: true, element: <IndexPage /> },
+        { path: 'ecommerce', element: <OverviewEcommercePage /> },
+        { path: 'analytics', element: <OverviewAnalyticsPage /> },
+        { path: 'banking', element: <OverviewBankingPage /> },
+        { path: 'booking', element: <OverviewBookingPage /> },
+        { path: 'file', element: <OverviewFilePage /> },
+        { path: 'course', element: <OverviewCoursePage /> },
+        {
+          path: 'user',
+          children: [
+            { index: true, element: <UserProfilePage /> },
+            { path: 'profile', element: <UserProfilePage /> },
+            { path: 'cards', element: <UserCardsPage /> },
+            { path: 'list', element: <UserListPage /> },
+            { path: 'new', element: <UserCreatePage /> },
+            { path: ':id/edit', element: <UserEditPage /> },
+            {
+              path: 'account',
+              element: accountLayout(),
+              children: [
+                { index: true, element: <AccountGeneralPage /> },
+                { path: 'billing', element: <AccountBillingPage /> },
+                { path: 'notifications', element: <AccountNotificationsPage /> },
+                { path: 'socials', element: <AccountSocialsPage /> },
+                { path: 'change-password', element: <AccountChangePasswordPage /> },
+              ],
+            },
+          ],
+        },
+        {
+          path: 'product',
+          children: [
+            { index: true, element: <ProductListPage /> },
+            { path: 'list', element: <ProductListPage /> },
+            { path: ':id', element: <ProductDetailsPage /> },
+            { path: 'new', element: <ProductCreatePage /> },
+            { path: ':id/edit', element: <ProductEditPage /> },
+          ],
+        },
+        {
+          path: 'order',
+          children: [
+            { index: true, element: <OrderListPage /> },
+            { path: 'list', element: <OrderListPage /> },
+            { path: ':id', element: <OrderDetailsPage /> },
+          ],
+        },*/
       {
         path: 'invoice',
         children: [
@@ -175,7 +176,7 @@ export const dashboardRoutes: RouteObject[] = [
           { path: 'esegui-importazione', element: <ImportDdtPage /> },
         ],
       },
-      {
+      /*{
         path: 'post',
         children: [
           { index: true, element: <BlogPostsPage /> },
@@ -222,7 +223,7 @@ export const dashboardRoutes: RouteObject[] = [
           },
           { path: 'sub-1/sub-2', element: <SubpathsPage /> },
         ],
-      },
+      },*/
     ],
   },
 ];

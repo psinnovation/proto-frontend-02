@@ -1,5 +1,5 @@
 import type { UseSetStateReturn } from 'minimal-shared/hooks';
-import type { IInvoiceTableFilters } from 'src/types/invoice';
+import type { IDdtTableFilters } from 'src/types/ddt';
 import type { FiltersResultProps } from 'src/components/filters-result';
 
 import { useCallback } from 'react';
@@ -14,7 +14,7 @@ import { chipProps, FiltersBlock, FiltersResult } from 'src/components/filters-r
 
 type Props = FiltersResultProps & {
   onResetPage: () => void;
-  filters: UseSetStateReturn<IInvoiceTableFilters>;
+  filters: UseSetStateReturn<IDdtTableFilters>;
 };
 
 export function ImportDdtTableFiltersResult({ filters, totalResults, onResetPage, sx }: Props) {
@@ -25,14 +25,24 @@ export function ImportDdtTableFiltersResult({ filters, totalResults, onResetPage
     updateFilters({ name: '' });
   }, [onResetPage, updateFilters]);
 
-  const handleRemoveService = useCallback(
+  const handleRemoveShipments = useCallback(
     (inputValue: string) => {
-      const newValue = currentFilters.service.filter((item) => item !== inputValue);
+      const newValue = currentFilters.shipments.filter((item) => item !== inputValue);
 
       onResetPage();
-      updateFilters({ service: newValue });
+      updateFilters({ shipments: newValue });
     },
-    [onResetPage, updateFilters, currentFilters.service]
+    [onResetPage, updateFilters, currentFilters.shipments]
+  );
+
+  const handleRemoveOrders = useCallback(
+    (inputValue: string) => {
+      const newValue = currentFilters.orders.filter((item) => item !== inputValue);
+
+      onResetPage();
+      updateFilters({ orders: newValue });
+    },
+    [onResetPage, updateFilters, currentFilters.orders]
   );
 
   const handleRemoveStatus = useCallback(() => {
@@ -40,16 +50,17 @@ export function ImportDdtTableFiltersResult({ filters, totalResults, onResetPage
     updateFilters({ status: 'all' });
   }, [onResetPage, updateFilters]);
 
-  const handleRemoveDate = useCallback(() => {
-    onResetPage();
-    updateFilters({ startDate: null, endDate: null });
-  }, [onResetPage, updateFilters]);
-
   return (
     <FiltersResult totalResults={totalResults} onReset={() => resetFilters()} sx={sx}>
-      <FiltersBlock label="Service:" isShow={!!currentFilters.service.length}>
-        {currentFilters.service.map((item) => (
-          <Chip {...chipProps} key={item} label={item} onDelete={() => handleRemoveService(item)} />
+      <FiltersBlock label="Shipments:" isShow={!!currentFilters.shipments.length}>
+        {currentFilters.shipments.map((item) => (
+          <Chip {...chipProps} key={item} label={item} onDelete={() => handleRemoveShipments(item)} />
+        ))}
+      </FiltersBlock>
+
+      <FiltersBlock label="Orders:" isShow={!!currentFilters.orders.length}>
+        {currentFilters.orders.map((item) => (
+          <Chip {...chipProps} key={item} label={item} onDelete={() => handleRemoveOrders(item)} />
         ))}
       </FiltersBlock>
 
@@ -59,17 +70,6 @@ export function ImportDdtTableFiltersResult({ filters, totalResults, onResetPage
           label={currentFilters.status}
           onDelete={handleRemoveStatus}
           sx={{ textTransform: 'capitalize' }}
-        />
-      </FiltersBlock>
-
-      <FiltersBlock
-        label="Date:"
-        isShow={Boolean(currentFilters.startDate && currentFilters.endDate)}
-      >
-        <Chip
-          {...chipProps}
-          label={fDateRangeShortLabel(currentFilters.startDate, currentFilters.endDate)}
-          onDelete={handleRemoveDate}
         />
       </FiltersBlock>
 

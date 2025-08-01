@@ -65,57 +65,57 @@ export const navData: NavSectionProps['data'] = [
   /**
    * Overview
    */
-  {
-    subheader: 'Overview',
-    items: [
-      { title: 'App', path: paths.dashboard.root, icon: ICONS.dashboard },
-      { title: 'Ecommerce', path: paths.dashboard.general.ecommerce, icon: ICONS.ecommerce },
-      { title: 'Analytics', path: paths.dashboard.general.analytics, icon: ICONS.analytics },
-      { title: 'Banking', path: paths.dashboard.general.banking, icon: ICONS.banking },
-      { title: 'Booking', path: paths.dashboard.general.booking, icon: ICONS.booking },
-      { title: 'File', path: paths.dashboard.general.file, icon: ICONS.file },
-      { title: 'Course', path: paths.dashboard.general.course, icon: ICONS.course },
-    ],
-  },
+  /*  {
+      subheader: 'Overview',
+      items: [
+        { title: 'App', path: paths.dashboard.root, icon: ICONS.dashboard },
+        { title: 'Ecommerce', path: paths.dashboard.general.ecommerce, icon: ICONS.ecommerce },
+        { title: 'Analytics', path: paths.dashboard.general.analytics, icon: ICONS.analytics },
+        { title: 'Banking', path: paths.dashboard.general.banking, icon: ICONS.banking },
+        { title: 'Booking', path: paths.dashboard.general.booking, icon: ICONS.booking },
+        { title: 'File', path: paths.dashboard.general.file, icon: ICONS.file },
+        { title: 'Course', path: paths.dashboard.general.course, icon: ICONS.course },
+      ],
+    },*/
   /**
    * Management
    */
   {
     subheader: 'Procedure',
     items: [
-      {
-        title: 'User',
-        path: paths.dashboard.user.root,
-        icon: ICONS.user,
-        children: [
-          { title: 'Profile', path: paths.dashboard.user.root },
-          { title: 'Cards', path: paths.dashboard.user.cards },
-          { title: 'List', path: paths.dashboard.user.list },
-          { title: 'Create', path: paths.dashboard.user.new },
-          { title: 'Edit', path: paths.dashboard.user.demo.edit },
-          { title: 'Account', path: paths.dashboard.user.account, deepMatch: true },
-        ],
-      },
-      {
-        title: 'Product',
-        path: paths.dashboard.product.root,
-        icon: ICONS.product,
-        children: [
-          { title: 'List', path: paths.dashboard.product.root },
-          { title: 'Details', path: paths.dashboard.product.demo.details },
-          { title: 'Create', path: paths.dashboard.product.new },
-          { title: 'Edit', path: paths.dashboard.product.demo.edit },
-        ],
-      },
-      {
-        title: 'Order',
-        path: paths.dashboard.order.root,
-        icon: ICONS.order,
-        children: [
-          { title: 'List', path: paths.dashboard.order.root },
-          { title: 'Details', path: paths.dashboard.order.demo.details },
-        ],
-      },
+      /*      {
+              title: 'User',
+              path: paths.dashboard.user.root,
+              icon: ICONS.user,
+              children: [
+                { title: 'Profile', path: paths.dashboard.user.root },
+                { title: 'Cards', path: paths.dashboard.user.cards },
+                { title: 'List', path: paths.dashboard.user.list },
+                { title: 'Create', path: paths.dashboard.user.new },
+                { title: 'Edit', path: paths.dashboard.user.demo.edit },
+                { title: 'Account', path: paths.dashboard.user.account, deepMatch: true },
+              ],
+            },
+            {
+              title: 'Product',
+              path: paths.dashboard.product.root,
+              icon: ICONS.product,
+              children: [
+                { title: 'List', path: paths.dashboard.product.root },
+                { title: 'Details', path: paths.dashboard.product.demo.details },
+                { title: 'Create', path: paths.dashboard.product.new },
+                { title: 'Edit', path: paths.dashboard.product.demo.edit },
+              ],
+            },
+            {
+              title: 'Order',
+              path: paths.dashboard.order.root,
+              icon: ICONS.order,
+              children: [
+                { title: 'List', path: paths.dashboard.order.root },
+                { title: 'Details', path: paths.dashboard.order.demo.details },
+              ],
+            },*/
       {
         title: 'Invoice',
         path: paths.dashboard.invoice.root,
@@ -131,11 +131,9 @@ export const navData: NavSectionProps['data'] = [
         title: 'Import DDT',
         path: paths.dashboard.importDdt.root,
         icon: ICONS.user,
-        children: [
-          { title: 'Esegui Importazione', path: paths.dashboard.importDdt.root },
-        ],
+        children: [{ title: 'Esegui Importazione', path: paths.dashboard.importDdt.root }],
       },
-      {
+      /*{
         title: 'Blog',
         path: paths.dashboard.post.root,
         icon: ICONS.blog,
@@ -181,110 +179,110 @@ export const navData: NavSectionProps['data'] = [
       },
       { title: 'Chat', path: paths.dashboard.chat, icon: ICONS.chat },
       { title: 'Calendar', path: paths.dashboard.calendar, icon: ICONS.calendar },
-      { title: 'Kanban', path: paths.dashboard.kanban, icon: ICONS.kanban },
+      { title: 'Kanban', path: paths.dashboard.kanban, icon: ICONS.kanban },*/
     ],
   },
-  /**
-   * Item state
-   */
-  {
-    subheader: 'Misc',
-    items: [
-      {
-        /**
-         * Permissions can be set for each item by using the `allowedRoles` property.
-         * - If `allowedRoles` is not set (default), all roles can see the item.
-         * - If `allowedRoles` is an empty array `[]`, no one can see the item.
-         * - If `allowedRoles` contains specific roles, only those roles can see the item.
-         *
-         * Examples:
-         * - `allowedRoles: ['user']` - only users with the 'user' role can see this item.
-         * - `allowedRoles: ['admin']` - only users with the 'admin' role can see this item.
-         * - `allowedRoles: ['admin', 'manager']` - only users with the 'admin' or 'manager' roles can see this item.
-         *
-         * Combine with the `checkPermissions` prop to build conditional expressions.
-         * Example usage can be found in: src/sections/_examples/extra/navigation-bar-view/nav-vertical.{jsx | tsx}
-         */
-        title: 'Permission',
-        path: paths.dashboard.permission,
-        icon: ICONS.lock,
-        allowedRoles: ['admin', 'manager'],
-        caption: 'Only admin can see this item.',
-      },
-      {
-        title: 'Level',
-        path: '#/dashboard/menu-level',
-        icon: ICONS.menuItem,
-        children: [
-          {
-            title: 'Level 1a',
-            path: '#/dashboard/menu-level/1a',
-            children: [
-              { title: 'Level 2a', path: '#/dashboard/menu-level/1a/2a' },
-              {
-                title: 'Level 2b',
-                path: '#/dashboard/menu-level/1a/2b',
-                children: [
-                  {
-                    title: 'Level 3a',
-                    path: '#/dashboard/menu-level/1a/2b/3a',
-                  },
-                  {
-                    title: 'Level 3b',
-                    path: '#/dashboard/menu-level/1a/2b/3b',
-                  },
-                ],
-              },
-            ],
-          },
-          { title: 'Level 1b', path: '#/dashboard/menu-level/1b' },
-        ],
-      },
-      {
-        title: 'Disabled',
-        path: '#disabled',
-        icon: ICONS.disabled,
-        disabled: true,
-      },
-      {
-        title: 'Label',
-        path: '#label',
-        icon: ICONS.label,
-        info: (
-          <Label
-            color="info"
-            variant="inverted"
-            startIcon={<Iconify icon="solar:bell-bing-bold-duotone" />}
-          >
-            NEW
-          </Label>
-        ),
-      },
-      {
-        title: 'Caption',
-        path: '#caption',
-        icon: ICONS.menuItem,
-        caption:
-          'Quisque malesuada placerat nisl. In hac habitasse platea dictumst. Cras id dui. Pellentesque commodo eros a enim. Morbi mollis tellus ac sapien.',
-      },
-      {
-        title: 'Params',
-        path: '/dashboard/params?id=e99f09a7-dd88-49d5-b1c8-1daf80c2d7b1',
-        icon: ICONS.params,
-      },
-      {
-        title: 'Subpaths',
-        path: '/dashboard/subpaths',
-        icon: ICONS.subpaths,
-        deepMatch: true,
-      },
-      {
-        title: 'External link',
-        path: 'https://www.google.com/',
-        icon: ICONS.external,
-        info: <Iconify width={18} icon="eva:external-link-fill" />,
-      },
-      { title: 'Blank', path: paths.dashboard.blank, icon: ICONS.blank },
-    ],
-  },
+  /*   /!**
+     * Item state
+     *!/
+    {
+      subheader: 'Misc',
+      items: [
+        {
+          /!**
+           * Permissions can be set for each item by using the `allowedRoles` property.
+           * - If `allowedRoles` is not set (default), all roles can see the item.
+           * - If `allowedRoles` is an empty array `[]`, no one can see the item.
+           * - If `allowedRoles` contains specific roles, only those roles can see the item.
+           *
+           * Examples:
+           * - `allowedRoles: ['user']` - only users with the 'user' role can see this item.
+           * - `allowedRoles: ['admin']` - only users with the 'admin' role can see this item.
+           * - `allowedRoles: ['admin', 'manager']` - only users with the 'admin' or 'manager' roles can see this item.
+           *
+           * Combine with the `checkPermissions` prop to build conditional expressions.
+           * Example usage can be found in: src/sections/_examples/extra/navigation-bar-view/nav-vertical.{jsx | tsx}
+           *!/
+          title: 'Permission',
+          path: paths.dashboard.permission,
+          icon: ICONS.lock,
+          allowedRoles: ['admin', 'manager'],
+          caption: 'Only admin can see this item.',
+        },
+        {
+          title: 'Level',
+          path: '#/dashboard/menu-level',
+          icon: ICONS.menuItem,
+          children: [
+            {
+              title: 'Level 1a',
+              path: '#/dashboard/menu-level/1a',
+              children: [
+                { title: 'Level 2a', path: '#/dashboard/menu-level/1a/2a' },
+                {
+                  title: 'Level 2b',
+                  path: '#/dashboard/menu-level/1a/2b',
+                  children: [
+                    {
+                      title: 'Level 3a',
+                      path: '#/dashboard/menu-level/1a/2b/3a',
+                    },
+                    {
+                      title: 'Level 3b',
+                      path: '#/dashboard/menu-level/1a/2b/3b',
+                    },
+                  ],
+                },
+              ],
+            },
+            { title: 'Level 1b', path: '#/dashboard/menu-level/1b' },
+          ],
+        },
+        {
+          title: 'Disabled',
+          path: '#disabled',
+          icon: ICONS.disabled,
+          disabled: true,
+        },
+        {
+          title: 'Label',
+          path: '#label',
+          icon: ICONS.label,
+          info: (
+            <Label
+              color="info"
+              variant="inverted"
+              startIcon={<Iconify icon="solar:bell-bing-bold-duotone" />}
+            >
+              NEW
+            </Label>
+          ),
+        },
+        {
+          title: 'Caption',
+          path: '#caption',
+          icon: ICONS.menuItem,
+          caption:
+            'Quisque malesuada placerat nisl. In hac habitasse platea dictumst. Cras id dui. Pellentesque commodo eros a enim. Morbi mollis tellus ac sapien.',
+        },
+        {
+          title: 'Params',
+          path: '/dashboard/params?id=e99f09a7-dd88-49d5-b1c8-1daf80c2d7b1',
+          icon: ICONS.params,
+        },
+        {
+          title: 'Subpaths',
+          path: '/dashboard/subpaths',
+          icon: ICONS.subpaths,
+          deepMatch: true,
+        },
+        {
+          title: 'External link',
+          path: 'https://www.google.com/',
+          icon: ICONS.external,
+          info: <Iconify width={18} icon="eva:external-link-fill" />,
+        },
+        { title: 'Blank', path: paths.dashboard.blank, icon: ICONS.blank },
+      ],
+    },*/
 ];

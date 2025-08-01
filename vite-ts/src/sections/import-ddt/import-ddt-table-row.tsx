@@ -1,4 +1,4 @@
-import type { IInvoice } from 'src/types/invoice';
+import type { IDdt } from 'src/types/ddt';
 
 import { useBoolean, usePopover } from 'minimal-shared/hooks';
 
@@ -18,7 +18,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { RouterLink } from 'src/routes/components';
 
 import { fCurrency } from 'src/utils/format-number';
-import { fDate, fTime } from 'src/utils/format-time';
+import { fDate, fTime, formatPatterns } from 'src/utils/format-time';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
@@ -28,7 +28,7 @@ import { CustomPopover } from 'src/components/custom-popover';
 // ----------------------------------------------------------------------
 
 type Props = {
-  row: IInvoice;
+  row: IDdt;
   selected: boolean;
   editHref: string;
   detailsHref: string;
@@ -115,62 +115,12 @@ export function ImportDdtTableRow({
           />
         </TableCell>
 
-        <TableCell>1234556</TableCell>
-
-        <TableCell>
-          <Box sx={{ gap: 2, display: 'flex', alignItems: 'center' }}>
-            <Avatar alt={row.invoiceTo.name}>{row.invoiceTo.name.charAt(0).toUpperCase()}</Avatar>
-
-            <ListItemText
-              primary={row.invoiceTo.name}
-              secondary={
-                <Link component={RouterLink} href={detailsHref} color="inherit">
-                  {row.invoiceNumber}
-                </Link>
-              }
-              slotProps={{
-                primary: { noWrap: true, sx: { typography: 'body2' } },
-                secondary: {
-                  sx: { color: 'text.disabled', '&:hover': { color: 'text.secondary' } },
-                },
-              }}
-            />
-          </Box>
-        </TableCell>
-
-        <TableCell>
-          <ListItemText
-            primary={fDate(row.createDate)}
-            secondary={fTime(row.createDate)}
-            slotProps={{
-              primary: { noWrap: true, sx: { typography: 'body2' } },
-              secondary: { sx: { mt: 0.5, typography: 'caption' } },
-            }}
-          />
-        </TableCell>
-
-        <TableCell>
-          <ListItemText
-            primary={fDate(row.dueDate)}
-            secondary={fTime(row.dueDate)}
-            slotProps={{
-              primary: { noWrap: true, sx: { typography: 'body2' } },
-              secondary: { sx: { mt: 0.5, typography: 'caption' } },
-            }}
-          />
-        </TableCell>
-
-        <TableCell>{fCurrency(row.totalAmount)}</TableCell>
-
-        <TableCell align="center">{row.sent}</TableCell>
-
-        <TableCell>
+        <TableCell align="center">
           <Label
             variant="soft"
             color={
-              (row.status === 'paid' && 'success') ||
-              (row.status === 'pending' && 'warning') ||
-              (row.status === 'overdue' && 'error') ||
+              (row.status === 'success' && 'success') ||
+              (row.status === 'error' && 'error') ||
               'default'
             }
           >
@@ -178,13 +128,37 @@ export function ImportDdtTableRow({
           </Label>
         </TableCell>
 
+        <TableCell>{row.id}</TableCell>
+
+        <TableCell align="center">
+          <ListItemText
+            primary={fDate(row.createDate)}
+            secondary={fTime(row.createDate, formatPatterns.italianTime)}
+            slotProps={{
+              primary: { noWrap: true, sx: { typography: 'body2' } },
+              secondary: { sx: { mt: 0.5, typography: 'caption' } },
+            }}
+          />
+        </TableCell>
+
+        <TableCell align="center">{row.movementType}</TableCell>
+
+        <TableCell align="center">{row.shipment?.id}</TableCell>
+
+        <TableCell align="center">{row.order?.number}</TableCell>
+
+        <TableCell align="center">{row.order?.lineNumber}</TableCell>
+
+        <TableCell align="center">{row.item?.code}</TableCell>
+
+        <TableCell align="center">{row.item?.description}</TableCell>
+
         <TableCell align="right" sx={{ px: 1 }}>
           <IconButton color={menuActions.open ? 'inherit' : 'default'} onClick={menuActions.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
         </TableCell>
       </TableRow>
-
       {renderMenuActions()}
       {renderConfirmDialog()}
     </>
