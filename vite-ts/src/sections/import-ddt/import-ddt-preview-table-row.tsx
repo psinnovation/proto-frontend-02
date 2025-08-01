@@ -18,7 +18,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { RouterLink } from 'src/routes/components';
 
 import { fCurrency } from 'src/utils/format-number';
-import { fDate, fTime } from 'src/utils/format-time';
+import { fDate, fTime, formatPatterns } from 'src/utils/format-time';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
@@ -99,8 +99,6 @@ export function ImportDdtPreviewTableRow({
         />
     );
 
-    console.log('row of table', row);
-
     return (
         <>
             <TableRow hover selected={selected}>
@@ -122,7 +120,7 @@ export function ImportDdtPreviewTableRow({
                 <TableCell align="center">
                     <ListItemText
                         primary={fDate(row.createDate)}
-                        secondary={fTime(row.createDate)}
+                        secondary={fTime(row.createDate, formatPatterns.italianTime)}
                         slotProps={{
                             primary: { noWrap: true, sx: { typography: 'body2' } },
                             secondary: { sx: { mt: 0.5, typography: 'caption' } },

@@ -16,15 +16,18 @@ import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Tooltip from '@mui/material/Tooltip';
+import TableRow from '@mui/material/TableRow';
+import TableCell from '@mui/material/TableCell';
 import TableBody from '@mui/material/TableBody';
 import { useTheme } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import { grey, green } from '@mui/material/colors';
+import { grey, green, blue } from '@mui/material/colors';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import { paths } from 'src/routes/paths';
 
-import { fIsAfter, fIsBetween } from 'src/utils/format-time';
+import { fDateTime, formatPatterns } from 'src/utils/format-time';
 
 import { _ddt, DDT_SERVICE_OPTIONS } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
@@ -78,11 +81,11 @@ export function ImportazioneView() {
 
   const confirmDialog = useBoolean();
 
-  const [previewTableData, setPreviewTableData] = useState<IDdt[]>(_ddt);
+  const [statusProcess, setStatusProcess] = useState<'idle' | 'loading' | 'ready' | 'importing' | 'completed'>('idle');
+  const [previewTableData, setPreviewTableData] = useState<IDdt[]>([]);
   const [resultTableData, setResultTableData] = useState<IDdt[]>([]);
-
-  const [isDdtDownloaded, setIsDdtDownloaded] = useState(false);
-  const [isDdtImported, setIsDdtImported] = useState(false);
+  const [dateDownload, setDateDownload] = useState<Date | null>(null);
+  const [dateImport, setDateImport] = useState<Date | null>(null);
 
   const previewFilters = useSetState<IDdtTableFilters>({
     name: '',
@@ -98,7 +101,7 @@ export function ImportazioneView() {
   });
 
   // Estraggo i due stati e relativi setter:
-  const { state: currentPreviewFilters, setState: updatePreviewFilters } = previewFilters;
+  const { state: currentPreviewFilters } = previewFilters;
   const { state: currentResultFilters, setState: updateResultFilters } = resultFilters;
 
 
@@ -114,14 +117,23 @@ export function ImportazioneView() {
     filters: currentResultFilters,
   });
 
-  const handleDdtDownload = useCallback(() => {
-    setIsDdtDownloaded(state => !state);
-  }, []);
+  const handleDdtDownload = () => {
+    setStatusProcess('loading');
+    setTimeout(() => {
+      setDateDownload(new Date());
+      setPreviewTableData(_ddt);
+      setStatusProcess('ready');
+    }, 1500); // Simula download
+  };
 
-  const handleDdtImport = useCallback(() => {
-    setIsDdtImported(state => !state);
-    setResultTableData(previewDataFiltered);
-  }, [previewDataFiltered]);
+  const handleDdtImport = () => {
+    setStatusProcess('importing');
+    setTimeout(() => {
+      setDateImport(new Date());
+      setResultTableData(previewTableData);
+      setStatusProcess('completed');
+    }, 1500); // Simula importazione
+  };
 
   const dataInPage = rowInPage(previewDataFiltered, previewTable.page, previewTable.rowsPerPage);
 
@@ -277,6 +289,55 @@ export function ImportazioneView() {
     />
   );
 
+  const renderAlertByStatus = () => {
+    if (statusProcess === 'importing') {
+      return (
+        <Alert
+          severity="info"
+          variant="outlined"
+          sx={{
+            flexGrow: 1,
+            borderRadius: 1,
+          }}
+        >
+          Importazione in corso...
+        </Alert >
+      )
+    } else if (statusProcess === 'completed') {
+      return (
+        <Alert
+          severity="success"
+          variant="outlined"
+          sx={{
+            flexGrow: 1,
+            borderRadius: 1,
+          }}
+        >
+          Importazione conclusa alle {`${fDateTime(dateImport, formatPatterns.italianTime)} del ${fDateTime(dateImport, formatPatterns.split.date)}`}
+        </Alert >
+      )
+    } else {
+      return (
+        <Alert
+          severity="info"
+          variant="outlined"
+          sx={{
+            flexGrow: 1,
+            bgcolor: grey[100],
+            color: grey[700],
+            border: `1px solid ${grey[200]}`,
+            '& .MuiAlert-icon': {
+              color: grey[600]
+            },
+            borderRadius: 1,
+          }}
+        >
+          Nessuna importazione effettuata oggi.
+        </Alert>
+      );
+    }
+  }
+
   return (
     <>
       <DashboardContent>
@@ -361,7 +422,11 @@ export function ImportazioneView() {
                   pl: 2,
                 }}
               >
-                20 DDT da importare | Ultimo aggiornamento 12/12/2022.
+                {previewDataFiltered.length} DDT da importare | Ultimo aggiornamento {
+                  (statusProcess === 'idle' || statusProcess === 'loading')
+                    ? '-'
+                    : fDateTime(dateDownload, formatPatterns.italianSplit.dateTime)
+                }
               </Typography>
               <Button
                 variant="outlined"
@@ -369,6 +434,7 @@ export function ImportazioneView() {
                 size="large"
                 startIcon={<Iconify icon="custom:send-fill" />}
                 onClick={handleDdtDownload}
+                disabled={statusProcess !== 'idle'}
               >
                 Scarica DDT
               </Button>
@@ -391,7 +457,29 @@ export function ImportazioneView() {
                     )
                   }
                 />
-                {isDdtDownloaded ? (
+
+                {statusProcess === 'idle' && (
+                  <TableBody>
+                    <ImportDdtEmptyTable
+                      onDownload={handleDdtDownload}
+                      columnsCount={TABLE_HEAD.length}
+                    />
+                  </TableBody>
+                )}
+
+                {statusProcess === 'loading' && (
+                  <TableBody>
+                    <TableRow>
+                      <TableCell colSpan={TABLE_HEAD.length} sx={{ height: 400 }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                          <CircularProgress />
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                )}
+
+                {statusProcess !== 'idle' && statusProcess !== 'loading' && (
                   <TableBody>
                     {previewDataFiltered
                       .slice(
@@ -417,14 +505,8 @@ export function ImportazioneView() {
 
                     <TableNoData notFound={notFoundPreview} />
                   </TableBody>
-                ) : (
-                  <TableBody>
-                    <ImportDdtEmptyTable
-                      onDownload={handleDdtDownload}
-                      columnsCount={TABLE_HEAD.length}
-                    />
-                  </TableBody>
                 )}
+
               </Table>
 
             </Scrollbar>
@@ -441,47 +523,13 @@ export function ImportazioneView() {
 
         {/* ----------------------------------------------------------------------------------------------------------------------- */}
         <Box sx={{ mb: { xs: 3, md: 5 }, gap: 1, display: 'flex', alignItems: 'center' }}>
-          {isDdtImported && isDdtDownloaded ? (
-            <Alert
-              severity="success"
-              sx={{
-                flexGrow: 1,
-                bgcolor: green[50],
-                color: green[700],
-                border: `1px solid ${green[100]}`,
-                '& .MuiAlert-icon': {
-                  color: green[600],
-                  marginRight: 1,
-                },
-                borderRadius: 1,
-              }}
-            >
-              Importazione conclusa alle 16:22
-            </Alert>
-          ) : (
-            <Alert
-              severity="info"
-              sx={{
-                flexGrow: 1,
-                bgcolor: grey[100],
-                color: grey[700],
-                border: `1px solid ${grey[300]}`,
-                '& .MuiAlert-icon': {
-                  color: grey[600],
-                  marginRight: 1,
-                },
-                borderRadius: 1,
-              }}
-            >
-              Nessuna importazione effettuata oggi.
-            </Alert>
-          )}
+          {renderAlertByStatus()}
           <Button
             variant="contained"
             color="primary"
             size="large"
             startIcon={<Iconify icon="custom:send-fill" />}
-            disabled={!isDdtDownloaded}
+            disabled={statusProcess !== 'ready'}
             onClick={handleDdtImport}
           >
             Importa DDT
@@ -492,7 +540,19 @@ export function ImportazioneView() {
           Dettagli ultima importazione di oggi
         </Typography>
 
-        {isDdtImported && isDdtDownloaded ? (
+        {statusProcess !== 'completed' && statusProcess !== 'importing' && (
+          <Typography variant="body1" component="div" sx={{ mb: { xs: 3, md: 5 }, fontStyle: 'italic' }}>
+            Nessuna importazione oggi
+          </Typography>
+        )}
+
+        {statusProcess === 'importing' && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+            <CircularProgress />
+          </Box>
+        )}
+
+        {statusProcess === 'completed' && (
           <>
             <Card sx={{ mb: { xs: 3, md: 5 } }}>
               <Scrollbar sx={{ minHeight: 108 }}>
@@ -531,6 +591,15 @@ export function ImportazioneView() {
             </Card>
 
             <Card sx={{ mb: { xs: 3, md: 5 } }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                <Typography variant="subtitle1" component="h2" sx={{ pl: 2.5, pt: 2.5, pb: 1 }}>
+                  Importazione #231
+                </Typography>
+                <Typography variant="body2" component="span" sx={{ color: grey[600], pl: 2.5 }}>
+                  {fDateTime(dateImport, formatPatterns.italianSplit.dateTime)}
+                </Typography>
+              </Box>
+
               <Tabs
                 value={currentResultFilters.status}
                 onChange={handleFilterStatus}
@@ -670,10 +739,6 @@ export function ImportazioneView() {
               />
             </Card>
           </>
-        ) : (
-          <Typography variant="body1" component="div" sx={{ mb: { xs: 3, md: 5 }, fontStyle: 'italic' }}>
-            Nessuna importazione oggi
-          </Typography>
         )}
 
       </DashboardContent>

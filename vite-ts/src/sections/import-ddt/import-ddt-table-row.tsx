@@ -18,7 +18,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { RouterLink } from 'src/routes/components';
 
 import { fCurrency } from 'src/utils/format-number';
-import { fDate, fTime } from 'src/utils/format-time';
+import { fDate, fTime, formatPatterns } from 'src/utils/format-time';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
@@ -34,7 +34,6 @@ type Props = {
   detailsHref: string;
   onSelectRow: () => void;
   onDeleteRow: () => void;
-  isDdtDownloaded?: boolean; // Optional prop to determine if DDT is downloaded
 };
 
 export function ImportDdtTableRow({
@@ -44,7 +43,6 @@ export function ImportDdtTableRow({
   onSelectRow,
   onDeleteRow,
   detailsHref,
-  isDdtDownloaded = true
 }: Props) {
   const menuActions = usePopover();
   const confirmDialog = useBoolean();
@@ -103,66 +101,64 @@ export function ImportDdtTableRow({
 
   return (
     <>
-      {isDdtDownloaded && (
-        <TableRow hover selected={selected}>
-          <TableCell padding="checkbox">
-            <Checkbox
-              checked={selected}
-              onClick={onSelectRow}
-              slotProps={{
-                input: {
-                  id: `${row.id}-checkbox`,
-                  'aria-label': `${row.id} checkbox`,
-                },
-              }}
-            />
-          </TableCell>
+      <TableRow hover selected={selected}>
+        <TableCell padding="checkbox">
+          <Checkbox
+            checked={selected}
+            onClick={onSelectRow}
+            slotProps={{
+              input: {
+                id: `${row.id}-checkbox`,
+                'aria-label': `${row.id} checkbox`,
+              },
+            }}
+          />
+        </TableCell>
 
-          <TableCell>
-            <Label
-              variant="soft"
-              color={
-                (row.status === 'success' && 'success') ||
-                (row.status === 'error' && 'error') ||
-                'default'
-              }
-            >
-              {row.status}
-            </Label>
-          </TableCell>
+        <TableCell align="center">
+          <Label
+            variant="soft"
+            color={
+              (row.status === 'success' && 'success') ||
+              (row.status === 'error' && 'error') ||
+              'default'
+            }
+          >
+            {row.status}
+          </Label>
+        </TableCell>
 
-          <TableCell>{row.id}</TableCell>
+        <TableCell>{row.id}</TableCell>
 
-          <TableCell>
-            <ListItemText
-              primary={fDate(row.createDate)}
-              secondary={fTime(row.createDate)}
-              slotProps={{
-                primary: { noWrap: true, sx: { typography: 'body2' } },
-                secondary: { sx: { mt: 0.5, typography: 'caption' } },
-              }}
-            />
-          </TableCell>
+        <TableCell align="center">
+          <ListItemText
+            primary={fDate(row.createDate)}
+            secondary={fTime(row.createDate, formatPatterns.italianTime)}
+            slotProps={{
+              primary: { noWrap: true, sx: { typography: 'body2' } },
+              secondary: { sx: { mt: 0.5, typography: 'caption' } },
+            }}
+          />
+        </TableCell>
 
-          <TableCell align="center">{row.movementType}</TableCell>
+        <TableCell align="center">{row.movementType}</TableCell>
 
-          <TableCell align="center">{row.shipment?.id}</TableCell>
+        <TableCell align="center">{row.shipment?.id}</TableCell>
 
-          <TableCell align="center">{row.order?.number}</TableCell>
+        <TableCell align="center">{row.order?.number}</TableCell>
 
-          <TableCell align="center">{row.order?.lineNumber}</TableCell>
+        <TableCell align="center">{row.order?.lineNumber}</TableCell>
 
-          <TableCell align="center">{row.item?.code}</TableCell>
+        <TableCell align="center">{row.item?.code}</TableCell>
 
-          <TableCell align="center">{row.item?.description}</TableCell>
+        <TableCell align="center">{row.item?.description}</TableCell>
 
-          <TableCell align="right" sx={{ px: 1 }}>
-            <IconButton color={menuActions.open ? 'inherit' : 'default'} onClick={menuActions.onOpen}>
-              <Iconify icon="eva:more-vertical-fill" />
-            </IconButton>
-          </TableCell>
-        </TableRow>
-      )}
+        <TableCell align="right" sx={{ px: 1 }}>
+          <IconButton color={menuActions.open ? 'inherit' : 'default'} onClick={menuActions.onOpen}>
+            <Iconify icon="eva:more-vertical-fill" />
+          </IconButton>
+        </TableCell>
+      </TableRow>
       {renderMenuActions()}
       {renderConfirmDialog()}
     </>

@@ -37,11 +37,17 @@ export type DatePickerFormat = Dayjs | Date | string | number | null | undefined
 
 export const formatPatterns = {
   dateTime: 'DD MMM YYYY h:mm a', // 17 Apr 2022 12:00 am
+  dateTimeItalian: 'DD MMM YYYY HH:mm', // 17 Apr 2022 12:00
   date: 'DD MMM YYYY', // 17 Apr 2022
-  time: 'h:mm a', // 12:00 am
+  time: 'h:mm a', // 12:00 am,
+  italianTime: 'HH:mm', // 12:00
   split: {
     dateTime: 'DD/MM/YYYY h:mm a', // 17/04/2022 12:00 am
     date: 'DD/MM/YYYY', // 17/04/2022
+    timeDate: 'h:mm a DD/MM/YYYY', // 17/04/2022 12:00 am
+  },
+  italianSplit: {
+    dateTime: 'DD/MM/YYYY HH:mm', // 17/04/2022 12:00
   },
   paramCase: {
     dateTime: 'DD-MM-YYYY h:mm a', // 17-04-2022 12:00 am
